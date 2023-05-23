@@ -5,6 +5,8 @@
 // @match       *://*/*
 // @grant       GM_addStyle
 // @grant       GM.registerMenuCommand
+// @grant       GM.getValue
+// @grant       GM.setValue
 // @version     process.env.VERSION
 // @author      process.env.AUTHOR
 // @grant       GM.xmlHttpRequest
