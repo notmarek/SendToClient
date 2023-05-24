@@ -36,6 +36,7 @@ const rollupConfig = [
     output: {
       format: 'iife',
       file: `${DIST}/${FILENAME}.user.js`,
+      banner: `GM.registerMenuCommand('Build: ${Math.floor(Math.random() * 8888888)}', ()=>{});`,
       ...bundleOptions,
     },
   },

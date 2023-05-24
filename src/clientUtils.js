@@ -33,7 +33,7 @@ export const addTorrent = async (
       let res = await XFetch.post(
         `${clientUrl}/transmission/rpc`,
         JSON.stringify({
-          arguments: { filename: url, 'download-dir': path },
+          arguments: { filename: torrentUrl, 'download-dir': path },
           method: 'torrent-add',
         }),
         headers

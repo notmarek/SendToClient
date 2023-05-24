@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name        My Script
-// @namespace   Violentmonkey Scripts
+// @name        SendToClient
+// @namespace   NotMareks Scripts
 // @description This is a userscript.
 // @match       *://*/*
 // @grant       GM_addStyle

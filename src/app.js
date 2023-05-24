@@ -2,6 +2,7 @@
 
 import { profileManager } from './profileManager';
 import { Settings } from './settings';
+import { createButtons } from './trackerUtils';
 /* Notes
  * Profiles
  * Let you setup multiple clients and switch between them
@@ -18,7 +19,9 @@ import { Settings } from './settings';
  * BiglyBT (?)
  */
 
-GM.registerMenuCommand('Settings', () => {  Settings()});
+GM.registerMenuCommand('Settings', () => {
+  Settings();
+});
 const profileQuickSwitcher = () => {
   let id = GM.registerMenuCommand(
     `Selected Profile: ${profileManager.selectedProfile.name}`,
@@ -31,10 +34,13 @@ const profileQuickSwitcher = () => {
         next_profile < profileManager.profiles.length ? next_profile : 0
       );
       GM.unregisterMenuCommand(id);
-      Settings
+      Settings;
       profileQuickSwitcher();
     }
   );
 };
-profileManager.load().then(profileQuickSwitcher);
-console.log(GM);
+
+profileManager.load().then(() => {
+  profileQuickSwitcher();
+  createButtons();
+});
