@@ -40,7 +40,19 @@ function ClientSelector({ shadow }) {
   );
 }
 
-const profileOnSave = (e, shadow) => {};
+const profileOnSave = (e, shadow) => {
+  console.log(e);
+  let profile = profileManager.getProfile(shadow.querySelector("#profile").value);
+  profile.host = shadow.querySelector('#host').value;
+  profile.username = shadow.querySelector('#username').value;
+  profile.password = shadow.querySelector('#password').value;
+  profile.client = shadow.querySelector('#client').value;
+  profile.saveLocation = shadow.querySelector('#saveLocation').value;
+  console.log(profileManager.profiles);
+  profileManager.setSelectedProfile(profile.id);
+  profileManager.setProfile(profile);
+  profileManager.save();
+};
 
 function profileSelectHandler(e, shadow) {
     const profile = profileManager.getProfile(e.target.value);
@@ -48,11 +60,11 @@ function profileSelectHandler(e, shadow) {
     shadow.querySelector('#username').value = profile.username;
     shadow.querySelector('#password').value = profile.password;
     shadow.querySelector('#client').value = profile.client;
-    shadow.querySelector('#saveLocation').value = profile.path;
+    shadow.querySelector('#saveLocation').value = profile.saveLocation;
 }
 
 
-function ProfileSelector(shadow) {
+function ProfileSelector({shadow}) {
   return (
     <>
       <label for="profile">Profile:</label>
@@ -91,6 +103,7 @@ function SettingsElement({ panel }) {
           <input type="text" id="saveLocation" name="saveLocation" />
           <button
             onclick={async (e) => {
+              e.preventDefault();
               console.log(e);
               shadow.querySelector('select#client').value = await detectClient(
                 shadow.querySelector('#host').value
@@ -98,12 +111,14 @@ function SettingsElement({ panel }) {
               shadow
                 .querySelector('select#client')
                 .onchange({ target: shadow.querySelector('select#client') });
+              return false;
             }}
           >
             Detect client
           </button>
           <button
             onclick={async (e) => {
+              e.preventDefault();
               shadow.querySelector('#res').innerText = (await testClient(
                 shadow.querySelector('#host').value,
                 shadow.querySelector('#username').value,
@@ -112,6 +127,7 @@ function SettingsElement({ panel }) {
               ))
                 ? 'Client seems to be working'
                 : "Client doesn't seem to be working";
+              return false;
             }}
           >
             Test client
@@ -147,5 +163,6 @@ export const Settings = () => {
     document.body.style.overflow = 'auto';
   };
   panel.show();
+  profileSelectHandler({target: {value: profileManager.selectedProfile.id}}, panel.root);
   console.log(panel);
 };

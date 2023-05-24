@@ -42,13 +42,32 @@ export const profileManager = {
     this.profiles = this.profiles.find((p) => p.id === id);
   },
   getProfile: function (id) {
-    return this.profiles.find((p) => p.id === id) ?? new Profile(id, 'Default', '', '', '', 'none', '');
+    return (
+      this.profiles.find((p) => p.id === id) ??
+      new Profile(id, 'Default', '', '', '', 'none', '')
+    );
   },
   getProfiles: function () {
     if (this.profiles.length === 0) this.load();
+    console.log(this.profiles);
     return this.profiles.length === 0
       ? [new Profile(0, 'Default', '', '', '', 'none', '')]
       : this.profiles;
+  },
+  setSelectedProfile: function (id) {
+    this.selectedProfile = this.getProfile(id);
+  },
+  setProfile: function (profile) {
+    if (!this.profiles.includes(this.getProfile(profile.id))) {
+      this.profiles.push(profile);
+    } else {
+      this.profiles = this.profiles.map((p) => {
+        if (p.id === id) {
+          p = profile;
+        }
+        return p;
+      });
+    }
   },
   save: function () {
     GM.setValue('profiles', JSON.stringify(this.profiles));
@@ -57,8 +76,21 @@ export const profileManager = {
   load: async function () {
     const profiles = await GM.getValue('profiles');
     if (profiles) {
-      this.profiles = JSON.parse(profiles);
+      this.profiles = JSON.parse(profiles).map(
+        (p) =>
+          new Profile(
+            p.id,
+            p.name,
+            p.host,
+            p.username,
+            p.password,
+            p.client,
+            p.saveLocation
+          )
+      );
     }
-    this.selectedProfile = this.profiles[await GM.getValue('selectedProfile') ?? 0] ?? new Profile(0, 'Default', '', '', '', 'none', '');
+    this.selectedProfile =
+      this.profiles[(await GM.getValue('selectedProfile')) ?? 0] ??
+      new Profile(0, 'Default', '', '', '', 'none', '');
   },
 };
