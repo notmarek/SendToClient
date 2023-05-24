@@ -43,16 +43,14 @@ export const profileManager = {
   },
   getProfile: function (id) {
     return (
-      this.profiles.find((p) => p.id === id) ??
-      new Profile(id, 'Default', '', '', '', 'none', '')
+      this.profiles.find((p) => Number(p.id) === Number(id)) ??
+      new Profile(id, 'New Profile', '', '', '', 'none', '')
     );
   },
   getProfiles: function () {
     if (this.profiles.length === 0) this.load();
     console.log(this.profiles);
-    return this.profiles.length === 0
-      ? [new Profile(0, 'Default', '', '', '', 'none', '')]
-      : this.profiles;
+    return this.profiles;
   },
   setSelectedProfile: function (id) {
     this.selectedProfile = this.getProfile(id);
@@ -62,12 +60,16 @@ export const profileManager = {
       this.profiles.push(profile);
     } else {
       this.profiles = this.profiles.map((p) => {
-        if (p.id === id) {
+        if (p.id === profile.id) {
           p = profile;
         }
         return p;
       });
     }
+  },
+  getNextId: function () {
+    if (this.profiles.length === 0) return 0;
+    return Number(this.profiles.sort((a, b) => Number(b.id) > Number(a.id))[0].id) + 1;
   },
   save: function () {
     GM.setValue('profiles', JSON.stringify(this.profiles));
@@ -91,6 +93,6 @@ export const profileManager = {
     }
     this.selectedProfile =
       this.profiles[(await GM.getValue('selectedProfile')) ?? 0] ??
-      new Profile(0, 'Default', '', '', '', 'none', '');
+      new Profile(0, 'New Profile', '', '', '', 'none', '');
   },
 };

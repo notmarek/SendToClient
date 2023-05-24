@@ -18,5 +18,23 @@ import { Settings } from './settings';
  * BiglyBT (?)
  */
 
-profileManager.load();
-GM.registerMenuCommand('Settings', Settings);
+GM.registerMenuCommand('Settings', () => {  Settings()});
+const profileQuickSwitcher = () => {
+  let id = GM.registerMenuCommand(
+    `Selected Profile: ${profileManager.selectedProfile.name}`,
+    () => {
+      let next_profile =
+        profileManager.profiles.findIndex(
+          (e) => e.id === profileManager.selectedProfile.id
+        ) + 1;
+      profileManager.setSelectedProfile(
+        next_profile < profileManager.profiles.length ? next_profile : 0
+      );
+      GM.unregisterMenuCommand(id);
+      Settings
+      profileQuickSwitcher();
+    }
+  );
+};
+profileManager.load().then(profileQuickSwitcher);
+console.log(GM);

@@ -41,37 +41,71 @@ function ClientSelector({ shadow }) {
 }
 
 const profileOnSave = (e, shadow) => {
-  console.log(e);
-  let profile = profileManager.getProfile(shadow.querySelector("#profile").value);
+  let profile = profileManager.getProfile(
+    shadow.querySelector('#profile').value
+  );
   profile.host = shadow.querySelector('#host').value;
   profile.username = shadow.querySelector('#username').value;
   profile.password = shadow.querySelector('#password').value;
   profile.client = shadow.querySelector('#client').value;
   profile.saveLocation = shadow.querySelector('#saveLocation').value;
-  console.log(profileManager.profiles);
+  profile.name = shadow.querySelector('#profilename').value;
   profileManager.setSelectedProfile(profile.id);
   profileManager.setProfile(profile);
   profileManager.save();
+  shadow.querySelector('#profile').innerHTML = null;
+  shadow.querySelector('#profile').appendChild(
+    VM.m(
+      <>
+        {profileManager.getProfiles().map((p) => {
+          return (
+            <option
+              selected={p.id === profileManager.selectedProfile.id}
+              value={p.id}
+            >
+              {p.name}
+            </option>
+          );
+        })}
+        <option value={profileManager.getNextId()}>New profile</option>
+      </>
+    )
+  );
 };
 
 function profileSelectHandler(e, shadow) {
-    const profile = profileManager.getProfile(e.target.value);
-    shadow.querySelector('#host').value = profile.host;
-    shadow.querySelector('#username').value = profile.username;
-    shadow.querySelector('#password').value = profile.password;
-    shadow.querySelector('#client').value = profile.client;
-    shadow.querySelector('#saveLocation').value = profile.saveLocation;
+  const profile = profileManager.getProfile(e.target.value);
+  shadow.querySelector('#host').value = profile.host;
+  shadow.querySelector('#username').value = profile.username;
+  shadow.querySelector('#password').value = profile.password;
+  shadow.querySelector('#client').value = profile.client;
+  shadow.querySelector('#saveLocation').value = profile.saveLocation;
+  shadow.querySelector("label[for='username']").hidden =
+    profile.client === 'deluge';
+  shadow.querySelector('#username').hidden = profile.client === 'deluge';
+  shadow.querySelector('#profilename').value = profile.name;
 }
 
-
-function ProfileSelector({shadow}) {
+function ProfileSelector({ shadow }) {
   return (
     <>
       <label for="profile">Profile:</label>
-      <select id="profile" name="profile" onchange={(e) => profileSelectHandler(e, shadow)}>
+      <select
+        id="profile"
+        name="profile"
+        onchange={(e) => profileSelectHandler(e, shadow)}
+      >
         {profileManager.getProfiles().map((p) => {
-          return <option selected={p.id === profileManager.selectedProfile.id} value={p.id}>{p.name}</option>;
+          return (
+            <option
+              selected={p.id === profileManager.selectedProfile.id}
+              value={p.id}
+            >
+              {p.name}
+            </option>
+          );
         })}
+        <option value={profileManager.getNextId()}>New profile</option>
       </select>
     </>
   );
@@ -93,6 +127,8 @@ function SettingsElement({ panel }) {
         >
           <ProfileSelector shadow={shadow} />
           <ClientSelector shadow={shadow} />
+          <label for="profilename">Profile name:</label>
+          <input type="text" id="profilename" name="profilename" />
           <label for="host">Host:</label>
           <input type="text" id="host" name="host" />
           <label for="username">Username:</label>
@@ -163,6 +199,9 @@ export const Settings = () => {
     document.body.style.overflow = 'auto';
   };
   panel.show();
-  profileSelectHandler({target: {value: profileManager.selectedProfile.id}}, panel.root);
+  profileSelectHandler(
+    { target: { value: profileManager.selectedProfile.id } },
+    panel.root
+  );
   console.log(panel);
 };
