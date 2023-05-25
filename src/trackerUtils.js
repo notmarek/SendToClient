@@ -18,6 +18,9 @@ const handlers = [
       'uhdbits.org',
       'morethantv.me',
       'empornium.is',
+      'deepbassnine.com',
+      'broadcasthe.net',
+      'secret-cinema.pw',
     ],
     run: async () => {
       for (const a of Array.from(document.querySelectorAll('a')).filter(

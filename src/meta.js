@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        SendToClient
 // @namespace   NotMareks Scripts
-// @description This is a userscript.
+// @description Painlessly send torrents to your bittorrent client.
 // @match       *://*/*
 // @grant       GM_addStyle
 // @grant       GM.registerMenuCommand
