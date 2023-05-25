@@ -1,6 +1,6 @@
 {
   "name": "sendtoclient",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "author": "notmarek",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "prepare": "husky install",
     "dev": "rollup -wc rollup.conf.js",
     "clean": "del-cli dist",
-    "build:js": "rollup -c rollup.conf.js",
+    "build:js": "NODE_ENV=production rollup -c rollup.conf.js",
     "prebuild": "run-s ci clean",
     "build": "cross-env NODE_ENV=production run-s build:js",
     "ci": "run-s lint",

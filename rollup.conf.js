@@ -2,9 +2,10 @@ const path = require('path');
 const { getRollupPlugins } = require('@gera2ld/plaid');
 const userscript = require('rollup-plugin-userscript');
 const pkg = require('./package.json');
+const env = process.env.NODE_ENV || 'development';
 
 const DIST = 'dist';
-const FILENAME = 'index';
+const FILENAME = 'SendToClient';
 
 const bundleOptions = {
   extend: true,
@@ -36,7 +37,7 @@ const rollupConfig = [
     output: {
       format: 'iife',
       file: `${DIST}/${FILENAME}.user.js`,
-      banner: `GM.registerMenuCommand('Build: ${Math.floor(Math.random() * 8888888)}', ()=>{});`,
+      banner: env === "development" ? `GM.registerMenuCommand('Build: ${Math.floor(Math.random() * 8888888)}', ()=>{});` : '',
       ...bundleOptions,
     },
   },

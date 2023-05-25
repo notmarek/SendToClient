@@ -56,6 +56,14 @@ const handlers = [
       }
     },
   },
+  {
+    name: 'AnilistBytes',
+    matches: ['anilist.co'],
+    run: async () => {
+      unsafeWindow._addTo = async (torrentUrl) =>
+        profileManager.selectedProfile.addTorrent(torrentUrl);
+    },
+  },
 ];
 
 export const createButtons = async () => {

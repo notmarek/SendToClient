@@ -1,7 +1,5 @@
 import { XFetch } from './XFetch';
 
-// TODO: Create an _addTo compat function
-
 export const addTorrent = async (
   torrentUrl,
   clientUrl,
@@ -39,7 +37,9 @@ export const addTorrent = async (
         headers
       );
       if (res.raw.status === 409) {
-        implementations.trans((await res.headers())['X-Transmission-Session-Id']);
+        implementations.trans(
+          (await res.headers())['X-Transmission-Session-Id']
+        );
       }
     },
     flood: async () => {
@@ -96,7 +96,7 @@ export const addTorrent = async (
     },
   };
 
-   await implementations[client]();
+  await implementations[client]();
 };
 
 export async function testClient(url, username, password, client) {
