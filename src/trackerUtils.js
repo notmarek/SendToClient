@@ -31,6 +31,32 @@ const handlers = [
         let buttons = Array.from(parent.childNodes).filter(
           (e) => e.nodeName !== '#text'
         );
+        let fl = Array.from(parent.querySelectorAll('a')).find(
+          (a) => a.innerText === 'FL'
+        );
+        let fst = fl ? (
+          <>
+            &nbsp;|&nbsp;
+            <a
+              href="#"
+              title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
+              onclick={async (e) => {
+                e.preventDefault();
+                if (
+                  !confirm(
+                    'Are you sure you want to use a freeleech token here?'
+                  )
+                )
+                  return;
+                await profileManager.selectedProfile.addTorrent(fl.href);
+                e.target.innerText = 'Added!';
+                e.target.onclick = null;
+              }}
+            >
+              FST
+            </a>
+          </>
+        ) : null;
         parent.innerHTML = null;
         parent.appendChild(
           VM.m(
@@ -51,19 +77,7 @@ const handlers = [
               >
                 ST
               </a>
-              &nbsp;|&nbsp;
-              <a
-                href="#"
-                title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
-                onclick={async (e) => {
-                  e.preventDefault();
-                  await profileManager.selectedProfile.addTorrent(torrentUrl + "&usetoken=1");
-                  e.target.innerText = 'Added!';
-                  e.target.onclick = null;
-                }}
-              >
-                FST
-              </a>
+              {fst}
               &nbsp;]
             </>
           )
