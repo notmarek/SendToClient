@@ -60,6 +60,40 @@ const handlers = [
     },
   },
   {
+    name: 'UNIT3D',
+    matches: ['blutopia.cc'],
+    run: async () => {
+      console.log(
+        '[SendToClient] Bypassing CSP so we can listen for soft navigations.'
+      );
+      document.addEventListener('popstate', () => {
+        console.log(
+          '[SendToClient] Detected a soft navigation to ' +
+            unsafeWindow.location.href
+        );
+      });
+      document.addEventListener('securitypolicyviolation', (e) => {
+        const nonce = e.originalPolicy.match(/nonce-(.*?)'/)[1];
+        let actualScript = VM.m(
+          <script nonce={nonce}>
+            {`console.log('[SendToClient] Adding a navigation listener.');
+            (() => {
+              let oldPushState = history.pushState;
+              history.pushState = function pushState() {
+                  let ret = oldPushState.apply(this, arguments);
+                  document.dispatchEvent(new Event('popstate'));
+                  return ret;
+              };
+            })();`}
+          </script>
+        );
+        document.head.appendChild(actualScript);
+      });
+      let s = VM.m(<script nonce="nonce-123">window.csp = "csp :(";</script>);
+      document.head.appendChild(s);
+    },
+  },
+  {
     name: 'AnilistBytes',
     matches: ['anilist.co'],
     run: async () => {
