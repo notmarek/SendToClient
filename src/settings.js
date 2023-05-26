@@ -140,7 +140,6 @@ function SettingsElement({ panel }) {
           <button
             onclick={async (e) => {
               e.preventDefault();
-              console.log(e);
               shadow.querySelector('select#client').value = await detectClient(
                 shadow.querySelector('#host').value
               );
@@ -203,5 +202,4 @@ export const Settings = () => {
     { target: { value: profileManager.selectedProfile.id } },
     panel.root
   );
-  console.log(panel);
 };

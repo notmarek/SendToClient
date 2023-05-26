@@ -158,7 +158,6 @@ export async function testClient(url, username, password, client) {
     },
   };
   let result = await clients[client]();
-  console.log('result', result);
   return result;
 }
 
@@ -166,7 +165,6 @@ export async function detectClient(url) {
   const res = await XFetch.get(url);
   const body = await res.text();
   const headers = await res.headers();
-  console.log(res.raw);
   if (headers.hasOwnProperty('WWW-Authenticate')) {
     const wwwAuthenticateHeader = headers['WWW-Authenticate'];
     if (wwwAuthenticateHeader.includes('"Transmission"')) return 'trans';

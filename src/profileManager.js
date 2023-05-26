@@ -49,7 +49,6 @@ export const profileManager = {
   },
   getProfiles: function () {
     if (this.profiles.length === 0) this.load();
-    console.log(this.profiles);
     return this.profiles;
   },
   setSelectedProfile: function (id) {

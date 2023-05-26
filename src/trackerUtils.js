@@ -31,7 +31,6 @@ const handlers = [
         let buttons = Array.from(parent.childNodes).filter(
           (e) => e.nodeName !== '#text'
         );
-        console.log(parent);
         parent.innerHTML = null;
         parent.appendChild(
           VM.m(
@@ -60,18 +59,82 @@ const handlers = [
     },
   },
   {
-    name: 'UNIT3D',
-    matches: ['blutopia.cc'],
+    name: 'BLU UNIT3D',
+    matches: ['blutopia.cc', 'aither.cc'],
     run: async () => {
+      let rid = await fetch(
+        Array.from(document.querySelectorAll('ul>li>a')).find(
+          (e) => e.innerText === 'My Profile'
+        ).href + '/rsskey/edit'
+      )
+        .then((e) => e.text())
+        .then(
+          (e) =>
+            e
+              .replaceAll(/\s/g, '')
+              .match(
+                /name="current_rsskey"readonlytype="text"value="(.*?)">/
+              )[1]
+        );
+      handlers.find((h) => h.name === 'UNIT3D').run(rid);
+    },
+  },
+  {
+    name: 'UNIT3D',
+    matches: ['desitorrents.tv', 'jptv.club', 'telly.wtf', 'torrentseeds.org'],
+    run: async (rid = null) => {
+      if (!rid) {
+        rid = await fetch(
+          Array.from(document.querySelectorAll('ul>li>a')).find((e) =>
+            e.innerText.includes('My Profile')
+          ).href + '/settings/security'
+        )
+          .then((e) => e.text())
+          .then((e) => e.match(/ current_rid">(.*?)</)[1]);
+      }
+      const appendButton = () => {
+        Array.from(document.querySelectorAll('a[title="Download"]'))
+          .concat(
+            Array.from(
+              document.querySelectorAll(
+                'button[title="Download"], button[data-original-title="Download"]'
+              )
+            ).map((e) => e.parentElement)
+          )
+          .forEach((a) => {
+            let parent = a.parentElement;
+            let torrentUrl =
+              a.href.replace('/torrents/', '/torrent/') + `.${rid}`;
+            parent.appendChild(
+              VM.m(
+                <a
+                  href="#"
+                  onclick={async (e) => {
+                    e.preventDefault();
+                    await profileManager.selectedProfile.addTorrent(torrentUrl);
+                    e.target.innerText = 'Added!';
+                    e.target.onclick = null;
+                  }}
+                >
+                  ST
+                </a>
+              )
+            );
+          });
+      };
+      appendButton();
       console.log(
         '[SendToClient] Bypassing CSP so we can listen for soft navigations.'
       );
+
       document.addEventListener('popstate', () => {
         console.log(
           '[SendToClient] Detected a soft navigation to ' +
             unsafeWindow.location.href
         );
+        appendButton();
       });
+      // listen for a CSP violation so that we can grab the nonces
       document.addEventListener('securitypolicyviolation', (e) => {
         const nonce = e.originalPolicy.match(/nonce-(.*?)'/)[1];
         let actualScript = VM.m(
@@ -87,10 +150,14 @@ const handlers = [
             })();`}
           </script>
         );
-        document.head.appendChild(actualScript);
+        document.head.appendChild(actualScript).remove();
       });
-      let s = VM.m(<script nonce="nonce-123">window.csp = "csp :(";</script>);
-      document.head.appendChild(s);
+      // trigger a CSP violation
+      document.head
+        .appendChild(
+          VM.m(<script nonce="nonce-123">window.csp = "csp :(";</script>)
+        )
+        .remove();
     },
   },
   {
