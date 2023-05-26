@@ -51,6 +51,19 @@ const handlers = [
               >
                 ST
               </a>
+              &nbsp;|&nbsp;
+              <a
+                href="#"
+                title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
+                onclick={async (e) => {
+                  e.preventDefault();
+                  await profileManager.selectedProfile.addTorrent(torrentUrl + "&usetoken=1");
+                  e.target.innerText = 'Added!';
+                  e.target.onclick = null;
+                }}
+              >
+                FST
+              </a>
               &nbsp;]
             </>
           )
