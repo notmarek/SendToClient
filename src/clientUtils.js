@@ -6,7 +6,8 @@ export const addTorrent = async (
   username,
   password,
   client,
-  path
+  path,
+  category
 ) => {
   let implementations = {
     qbit: async () => {
@@ -20,6 +21,7 @@ export const addTorrent = async (
       if (path) {
         tor_data.append('savepath', path);
       }
+      tor_data.append('category', category);
       XFetch.post(`${clientUrl}/api/v2/torrents/add`, tor_data);
     },
     trans: async (session_id = null) => {

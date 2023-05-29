@@ -43,7 +43,8 @@ class Profile {
       this.username,
       this.password,
       this.client,
-      this.saveLocation
+      this.saveLocation,
+      this.category
     );
   }
 }
@@ -60,7 +61,7 @@ export const profileManager = {
   getProfile: function (id) {
     return (
       this.profiles.find((p) => Number(p.id) === Number(id)) ??
-      new Profile(id, 'New Profile', '', '', '', 'none', '')
+      new Profile(id, 'New Profile', '', '', '', 'none', '', '')
     );
   },
   getProfiles: function () {
@@ -105,13 +106,14 @@ export const profileManager = {
             p.username,
             p.password,
             p.client,
-            p.saveLocation
+            p.saveLocation,
+            p.category ?? ''
           )
       );
     }
     console.log(Number(await GM.getValue('selectedProfile')));
     this.selectedProfile =
       this.getProfile(Number(await GM.getValue('selectedProfile')) ?? 0) ??
-      new Profile(0, 'New Profile', '', '', '', 'none', '');
+      new Profile(0, 'New Profile', '', '', '', 'none', '', '');
   },
 };

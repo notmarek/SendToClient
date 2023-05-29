@@ -56,6 +56,7 @@ const profileOnSave = (e, shadow) => {
   profile.client = shadow.querySelector('#client').value;
   profile.saveLocation = shadow.querySelector('#saveLocation').value;
   profile.name = shadow.querySelector('#profilename').value;
+  profile.category = shadow.querySelector('#category>input').value;
   profileManager.setSelectedProfile(profile.id);
   profileManager.setProfile(profile);
   profileManager.save();
@@ -118,7 +119,7 @@ function ProfileSelector({ shadow }) {
   );
 }
 
-async function laodCategories(shadow) {
+async function loadCategories(shadow) {
   let options = await profileManager.selectedProfile.getCategories().then((e) =>
     e.map((cat) => (
       <option
@@ -138,6 +139,8 @@ async function laodCategories(shadow) {
       Default
     </option>
   );
+  shadow.querySelector('#category>input').value =
+    profileManager.selectedProfile.category;
   shadow.querySelector('select[name="category"]').innerHTML = null;
   shadow
     .querySelector('select[name="category"]')
@@ -152,7 +155,7 @@ function CategorySelector({ shadow, hidden }) {
       <div id="category" hidden={hidden} className={styles.select_input}>
         <select
           name="category"
-          onload={() => laodCategories(shadow)}
+          onload={() => loadCategories(shadow)}
           onchange={(e) =>
             (shadow.querySelector('#category>input').value = e.target.value)
           }
