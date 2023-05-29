@@ -1,7 +1,16 @@
-import { testClient, addTorrent } from './clientUtils';
+import { testClient, addTorrent, getCategories } from './clientUtils';
 
 class Profile {
-  constructor(id, name, host, username, password, client, saveLocation) {
+  constructor(
+    id,
+    name,
+    host,
+    username,
+    password,
+    client,
+    saveLocation,
+    category = ''
+  ) {
     this.id = id;
     this.name = name;
     this.host = host;
@@ -9,8 +18,15 @@ class Profile {
     this.password = password;
     this.client = client;
     this.saveLocation = saveLocation;
+    this.category = category;
   }
 
+  async getCategories() {
+    if (this.client != 'qbit') return [];
+    let res = await getCategories(this.host, this.username, this.password);
+    console.log(res);
+    return res;
+  }
   async testConnection() {
     return await testClient(
       this.host,
@@ -68,7 +84,10 @@ export const profileManager = {
   },
   getNextId: function () {
     if (this.profiles.length === 0) return 0;
-    return Number(this.profiles.sort((a, b) => Number(b.id) > Number(a.id))[0].id) + 1;
+    return (
+      Number(this.profiles.sort((a, b) => Number(b.id) > Number(a.id))[0].id) +
+      1
+    );
   },
   save: function () {
     GM.setValue('profiles', JSON.stringify(this.profiles));
@@ -90,8 +109,9 @@ export const profileManager = {
           )
       );
     }
+    console.log(Number(await GM.getValue('selectedProfile')));
     this.selectedProfile =
-      this.profiles[(await GM.getValue('selectedProfile')) ?? 0] ??
+      this.getProfile(Number(await GM.getValue('selectedProfile')) ?? 0) ??
       new Profile(0, 'New Profile', '', '', '', 'none', '');
   },
 };

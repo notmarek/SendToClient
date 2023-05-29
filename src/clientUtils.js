@@ -99,7 +99,7 @@ export const addTorrent = async (
   await implementations[client]();
 };
 
-export async function testClient(url, username, password, client) {
+export async function testClient(clientUrl, username, password, client) {
   let clients = {
     trans: async () => {
       let headers = {
@@ -107,7 +107,7 @@ export async function testClient(url, username, password, client) {
         'Content-Type': 'application/json',
         'X-Transmission-Session-Id': null,
       };
-      let res = await XFetch.post(`${url}/transmission/rpc`, null, headers);
+      let res = await XFetch.post(`${clientUrl}/transmission/rpc`, null, headers);
       if (res.raw.status !== 401) {
         return true;
       }
@@ -115,7 +115,7 @@ export async function testClient(url, username, password, client) {
     },
     qbit: async () => {
       let res = await XFetch.post(
-        `${url}/api/v2/auth/login`,
+        `${clientUrl}/api/v2/auth/login`,
         `username=${username}&password=${password}`,
         { 'content-type': 'application/x-www-form-urlencoded', cookie: 'SID=' }
       );
@@ -126,7 +126,7 @@ export async function testClient(url, username, password, client) {
     },
     deluge: async () => {
       let res = await XFetch.post(
-        `${url}/json`,
+        `${clientUrl}/json`,
         JSON.stringify({
           method: 'auth.login',
           params: [password],
@@ -145,7 +145,7 @@ export async function testClient(url, username, password, client) {
     },
     flood: async () => {
       let res = await XFetch.post(
-        `${url}/api/auth/authenticate`,
+        `${clientUrl}/api/auth/authenticate`,
         JSON.stringify({ password, username }),
         { 'content-type': 'application/json' }
       );
@@ -160,6 +160,18 @@ export async function testClient(url, username, password, client) {
   let result = await clients[client]();
   return result;
 }
+
+export const getCategories = async (clientUrl, username, password) => {
+  console.log(`${clientUrl}/api/v2/auth/login`, username, password)
+  XFetch.post(
+    `${clientUrl}/api/v2/auth/login`,
+    `username=${username}&password=${password}`,
+    { 'content-type': 'application/x-www-form-urlencoded' }
+  );
+  let res = await XFetch.get(`${clientUrl}/api/v2/torrents/categories`);
+  return Object.keys(await res.json());
+}
+
 
 export async function detectClient(url) {
   const res = await XFetch.get(url);

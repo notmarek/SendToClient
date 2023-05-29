@@ -10,6 +10,8 @@ const clientSelectorOnChange = (e, shadow) => {
       e.target.value === 'flood'
         ? document.location.href.replace(/\/overview|login\/$/, '')
         : document.location.href.replace(/\/$/, '');
+  shadow.querySelector('#category').hidden = e.target.value !== 'qbit';
+  shadow.querySelector("label[for='category']").hidden = e.target.value !== 'qbit';
   shadow.querySelector("label[for='username']").hidden =
     e.target.value === 'deluge';
   shadow.querySelector('#username').hidden = e.target.value === 'deluge';
@@ -84,6 +86,7 @@ function profileSelectHandler(e, shadow) {
     profile.client === 'deluge';
   shadow.querySelector('#username').hidden = profile.client === 'deluge';
   shadow.querySelector('#profilename').value = profile.name;
+  shadow.querySelector("select#client").onchange({ target: shadow.querySelector('select#client') });
 }
 
 function ProfileSelector({ shadow }) {
@@ -107,6 +110,47 @@ function ProfileSelector({ shadow }) {
         })}
         <option value={profileManager.getNextId()}>New profile</option>
       </select>
+    </>
+  );
+}
+
+async function laodCategories(shadow) {
+  let options = await profileManager.selectedProfile.getCategories().then((e) =>
+    e.map((cat) => (
+      <option
+        value={cat}
+        selected={profileManager.selectedProfile.category === cat}
+      >
+        {cat}
+      </option>
+    ))
+  );
+  options.push(
+    <option
+      value=""
+      default
+      selected={profileManager.selectedProfile.category === ''}
+    ></option>
+  );
+  shadow.querySelector('select[name="category"]').innerHTML = null;
+  shadow
+    .querySelector('select[name="category"]')
+    .appendChild(VM.m(<>{options}</>));
+}
+function CategorySelector({ shadow, hidden }) {
+  return (
+    <>
+      <label for="category" hidden={hidden}>Category:</label>
+      <div id="category" hidden={hidden}>
+        <input type="text" name="category" />
+        <select
+          name="category"
+          onload={laodCategories(shadow)}
+          onchange={(e) =>
+            (shadow.querySelector('#category>input').value = e.target.value)
+          }
+        ></select>
+      </div>
     </>
   );
 }
@@ -135,6 +179,11 @@ function SettingsElement({ panel }) {
           <input type="text" id="username" name="username" />
           <label for="password">Password:</label>
           <input type="password" id="password" name="password" />
+          <CategorySelector
+            hidden={profileManager.selectedProfile.client !== 'qbit'}
+            shadow={shadow}
+          />
+
           <label for="saveLocation">Save location:</label>
           <input type="text" id="saveLocation" name="saveLocation" />
           <button
