@@ -11,7 +11,11 @@ const clientSelectorOnChange = (e, shadow) => {
         ? document.location.href.replace(/\/overview|login\/$/, '')
         : document.location.href.replace(/\/$/, '');
   shadow.querySelector('#category').hidden = e.target.value !== 'qbit';
-  shadow.querySelector("label[for='category']").hidden = e.target.value !== 'qbit';
+  shadow.querySelector("label[for='category']").hidden =
+    e.target.value !== 'qbit';
+  if (e.target.value === 'qbit') {
+    shadow.querySelector('#category>select').onload();
+  }
   shadow.querySelector("label[for='username']").hidden =
     e.target.value === 'deluge';
   shadow.querySelector('#username').hidden = e.target.value === 'deluge';
@@ -82,11 +86,11 @@ function profileSelectHandler(e, shadow) {
   shadow.querySelector('#password').value = profile.password;
   shadow.querySelector('#client').value = profile.client;
   shadow.querySelector('#saveLocation').value = profile.saveLocation;
-  shadow.querySelector("label[for='username']").hidden =
-    profile.client === 'deluge';
-  shadow.querySelector('#username').hidden = profile.client === 'deluge';
   shadow.querySelector('#profilename').value = profile.name;
-  shadow.querySelector("select#client").onchange({ target: shadow.querySelector('select#client') });
+  profileManager.setSelectedProfile(profile.id);
+  shadow
+    .querySelector('select#client')
+    .onchange({ target: shadow.querySelector('select#client') });
 }
 
 function ProfileSelector({ shadow }) {
@@ -130,7 +134,9 @@ async function laodCategories(shadow) {
       value=""
       default
       selected={profileManager.selectedProfile.category === ''}
-    ></option>
+    >
+      Default
+    </option>
   );
   shadow.querySelector('select[name="category"]').innerHTML = null;
   shadow
@@ -140,16 +146,18 @@ async function laodCategories(shadow) {
 function CategorySelector({ shadow, hidden }) {
   return (
     <>
-      <label for="category" hidden={hidden}>Category:</label>
-      <div id="category" hidden={hidden}>
-        <input type="text" name="category" />
+      <label for="category" hidden={hidden}>
+        Category:
+      </label>
+      <div id="category" hidden={hidden} className={styles.select_input}>
         <select
           name="category"
-          onload={laodCategories(shadow)}
+          onload={() => laodCategories(shadow)}
           onchange={(e) =>
             (shadow.querySelector('#category>input').value = e.target.value)
           }
         ></select>
+        <input type="text" name="category" />
       </div>
     </>
   );

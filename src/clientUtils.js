@@ -107,7 +107,11 @@ export async function testClient(clientUrl, username, password, client) {
         'Content-Type': 'application/json',
         'X-Transmission-Session-Id': null,
       };
-      let res = await XFetch.post(`${clientUrl}/transmission/rpc`, null, headers);
+      let res = await XFetch.post(
+        `${clientUrl}/transmission/rpc`,
+        null,
+        headers
+      );
       if (res.raw.status !== 401) {
         return true;
       }
@@ -162,16 +166,18 @@ export async function testClient(clientUrl, username, password, client) {
 }
 
 export const getCategories = async (clientUrl, username, password) => {
-  console.log(`${clientUrl}/api/v2/auth/login`, username, password)
   XFetch.post(
     `${clientUrl}/api/v2/auth/login`,
     `username=${username}&password=${password}`,
     { 'content-type': 'application/x-www-form-urlencoded' }
   );
   let res = await XFetch.get(`${clientUrl}/api/v2/torrents/categories`);
-  return Object.keys(await res.json());
-}
-
+  try {
+    return Object.keys(await res.json());
+  } catch {
+    return [];
+  }
+};
 
 export async function detectClient(url) {
   const res = await XFetch.get(url);
