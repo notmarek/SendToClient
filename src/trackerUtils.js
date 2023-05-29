@@ -135,6 +135,7 @@ const handlers = [
             parent.appendChild(
               VM.m(
                 <a
+                  title={`Add to ${profileManager.selectedProfile.name}.`}
                   href="#"
                   onclick={async (e) => {
                     e.preventDefault();
