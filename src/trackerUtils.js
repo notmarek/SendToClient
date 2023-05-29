@@ -189,6 +189,46 @@ const handlers = [
     },
   },
   {
+    name: 'TorrentLeech',
+    matches: ['torrentleech.org'],
+    run: async () => {
+      const username = document
+        .querySelector('span.link')
+        .getAttribute('onclick')
+        .match('/profile/(.*?)/view')[1];
+      let rid = await fetch(`/profile/${username}/edit`)
+        .then((e) => e.text())
+        .then(
+          (e) =>
+            e.replaceAll(/\s/g, '').match(/rss.torrentleech.org\/(.*?)\</)[1]
+        );
+      document.head.appendChild(
+        VM.m(<style>{`td.td-quick-download { display: flex; }`}</style>)
+      );
+      for (const a of document.querySelectorAll('a.download')) {
+        let torrent_uri = a.href.match(/\/download\/(\d*?)\/(.*?)$/);
+        torrent_uri = `https://torrentleech.org/rss/download/${torrent_uri[1]}/${rid}/${torrent_uri[2]}`;
+        a.parentElement.appendChild(
+          VM.m(
+            <a
+              href="#"
+              title={`Add to ${profileManager.selectedProfile.name}.`}
+              onclick={async (e) => {
+                e.preventDefault();
+                await profileManager.selectedProfile.addTorrent(torrent_uri);
+                e.target.innerText = 'Added!';
+                e.target.onclick = null;
+                return false;
+              }}
+            >
+              ST
+            </a>
+          )
+        );
+      }
+    },
+  },
+  {
     name: 'AnilistBytes',
     matches: ['anilist.co'],
     run: async () => {
