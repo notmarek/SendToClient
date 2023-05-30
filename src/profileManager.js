@@ -70,6 +70,7 @@ export const profileManager = {
   },
   setSelectedProfile: function (id) {
     this.selectedProfile = this.getProfile(id);
+    window.dispatchEvent(new CustomEvent('profileChanged', { detail: this.selectedProfile }));
   },
   setProfile: function (profile) {
     if (!this.profiles.includes(this.getProfile(profile.id))) {

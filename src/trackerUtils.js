@@ -40,6 +40,7 @@ const handlers = [
             <a
               href="#"
               title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
+              className="sendtoclient"
               onclick={async (e) => {
                 e.preventDefault();
                 if (
@@ -67,6 +68,7 @@ const handlers = [
               ))}
               <a
                 href="#"
+                className="sendtoclient"
                 title={`Add to ${profileManager.selectedProfile.name}.`}
                 onclick={async (e) => {
                   e.preventDefault();
@@ -83,6 +85,15 @@ const handlers = [
           )
         );
       }
+      window.addEventListener('profileChanged', () => {
+        document.querySelectorAll('a.sendtoclient').forEach((e) => {
+          if (e.title.includes('Freeleechize')) {
+            e.title = `Freeleechize and add to ${profileManager.selectedProfile.name}.`;
+          } else {
+            e.title = `Add to ${profileManager.selectedProfile.name}.`;
+          }
+        });
+      });
     },
   },
   {
@@ -137,6 +148,7 @@ const handlers = [
                 <a
                   title={`Add to ${profileManager.selectedProfile.name}.`}
                   href="#"
+                  className="sendtoclient"
                   onclick={async (e) => {
                     e.preventDefault();
                     await profileManager.selectedProfile.addTorrent(torrentUrl);
