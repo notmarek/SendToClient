@@ -9,7 +9,8 @@ class Profile {
     password,
     client,
     saveLocation,
-    category = ''
+    category,
+    linkedTo = []
   ) {
     this.id = id;
     this.name = name;
@@ -19,8 +20,26 @@ class Profile {
     this.client = client;
     this.saveLocation = saveLocation;
     this.category = category;
+    this.linkedTo = linkedTo;
   }
-
+  async linkTo(site, replace = false) {
+    let alreadyLinkedTo = profileManager.profiles.find((p) =>
+      p.linkedTo.includes(site)
+    );
+    if (alreadyLinkedTo && !replace) {
+      return alreadyLinkedTo.name;
+    } else if (alreadyLinkedTo && replace) {
+      alreadyLinkedTo.unlinkFrom(site);
+    }
+    if (this.linkedTo.includes(site)) return true;
+    this.linkedTo.push(site);
+    profileManager.save();
+    return true;
+  }
+  async unlinkFrom(site) {
+    this.linkedTo = this.linkedTo.filter((s) => s !== site);
+    profileManager.save();
+  }
   async getCategories() {
     if (this.client != 'qbit') return [];
     let res = await getCategories(this.host, this.username, this.password);
@@ -70,7 +89,9 @@ export const profileManager = {
   },
   setSelectedProfile: function (id) {
     this.selectedProfile = this.getProfile(id);
-    window.dispatchEvent(new CustomEvent('profileChanged', { detail: this.selectedProfile }));
+    window.dispatchEvent(
+      new CustomEvent('profileChanged', { detail: this.selectedProfile })
+    );
   },
   setProfile: function (profile) {
     if (!this.profiles.includes(this.getProfile(profile.id))) {
@@ -108,11 +129,19 @@ export const profileManager = {
             p.password,
             p.client,
             p.saveLocation,
-            p.category ?? ''
+            p.category ?? '',
+            p.linkedTo ?? []
           )
       );
     }
-    console.log(Number(await GM.getValue('selectedProfile')));
+    for (const profile of this.profiles) {
+      for (const site of profile.linkedTo) {
+        if (location.href.includes(site)) {
+          this.selectedProfile = profile;
+          return;
+        }
+      }
+    }
     this.selectedProfile =
       this.getProfile(Number(await GM.getValue('selectedProfile')) ?? 0) ??
       new Profile(0, 'New Profile', '', '', '', 'none', '', '');

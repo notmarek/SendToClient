@@ -82,13 +82,61 @@ const profileOnSave = (e, shadow) => {
 
 function profileSelectHandler(e, shadow) {
   const profile = profileManager.getProfile(e.target.value);
+  profileManager.setSelectedProfile(profile.id);
   shadow.querySelector('#host').value = profile.host;
   shadow.querySelector('#username').value = profile.username;
   shadow.querySelector('#password').value = profile.password;
   shadow.querySelector('#client').value = profile.client;
   shadow.querySelector('#saveLocation').value = profile.saveLocation;
   shadow.querySelector('#profilename').value = profile.name;
-  profileManager.setSelectedProfile(profile.id);
+  shadow.querySelector('#linkToSite').innerHTML = null;
+  shadow.querySelector('#linkToSite').appendChild(
+    VM.m(
+      <>
+        {profileManager.selectedProfile.linkedTo.map((site) => (
+          <option
+            onclick={(e) => {
+              e.target.hidden = 1;
+              profileManager.selectedProfile.unlinkFrom(e.target.value);
+              profileSelectHandler(
+                { target: shadow.querySelector('#profile') },
+                shadow
+              );
+            }}
+            value={site}
+          >
+            {site}
+          </option>
+        ))}
+        {profileManager.selectedProfile.linkedTo.includes(
+          location.hostname
+        ) ? null : (
+          <option
+            value={location.hostname}
+            onclick={async (e) => {
+              let result = await profileManager.selectedProfile.linkTo(
+                location.hostname
+              );
+
+              if (
+                result !== true &&
+                confirm(
+                  `This site is already linked to "${result}". Do you want to replace it?`
+                )
+              )
+                profileManager.selectedProfile.linkTo(location.hostname, true);
+              profileSelectHandler(
+                { target: shadow.querySelector('#profile') },
+                shadow
+              );
+            }}
+          >
+            Link to this site.
+          </option>
+        )}
+      </>
+    )
+  );
   shadow
     .querySelector('select#client')
     .onchange({ target: shadow.querySelector('select#client') });
@@ -166,6 +214,57 @@ function CategorySelector({ shadow, hidden }) {
   );
 }
 
+function LinkToSite({ shadow }) {
+  return (
+    <>
+      <label for="linkToSite">Linked to:</label>
+      <select id="linkToSite" name="linkToSite">
+        {profileManager.selectedProfile.linkedTo.map((site) => (
+          <option
+            onclick={(e) => {
+              e.target.hidden = 1;
+              profileManager.selectedProfile.unlinkFrom(e.target.value);
+              profileSelectHandler(
+                { target: shadow.querySelector('#profile') },
+                shadow
+              );
+            }}
+            value={site}
+          >
+            {site}
+          </option>
+        ))}
+        {profileManager.selectedProfile.linkedTo.includes(
+          location.hostname
+        ) ? null : (
+          <option
+            value={location.hostname}
+            onclick={async (e) => {
+              let result = await profileManager.selectedProfile.linkTo(
+                location.hostname
+              );
+
+              if (
+                result !== true &&
+                confirm(
+                  `This site is already linked to "${result}". Do you want to replace it?`
+                )
+              )
+                profileManager.selectedProfile.linkTo(location.hostname, true);
+              profileSelectHandler(
+                { target: shadow.querySelector('#profile') },
+                shadow
+              );
+            }}
+          >
+            Link to this site.
+          </option>
+        )}
+      </select>
+    </>
+  );
+}
+
 function SettingsElement({ panel }) {
   const shadow = panel.root;
   return (
@@ -181,6 +280,7 @@ function SettingsElement({ panel }) {
           }}
         >
           <ProfileSelector shadow={shadow} />
+          <LinkToSite shadow={shadow} />
           <ClientSelector shadow={shadow} />
           <label for="profilename">Profile name:</label>
           <input type="text" id="profilename" name="profilename" />
