@@ -1,5 +1,7 @@
 const path = require('path');
 const { getRollupPlugins } = require('@gera2ld/plaid');
+const sites = require('./sites.json');
+
 const userscript = require('rollup-plugin-userscript');
 const pkg = require('./package.json');
 const env = process.env.NODE_ENV || 'development';
@@ -16,6 +18,30 @@ const postcssOptions = {
   inject: false,
   minimize: true,
 };
+
+const coolreplace = () => {
+  return {
+    name: 'coolreplace',
+
+    buildStart() {},
+
+    renderChunk(code, chunk) {
+      return {
+        code: code.replaceAll(/'sites\[(.*?)\]'/g, (match, site) =>
+          JSON.stringify(sites[site])
+        ),
+      };
+    },
+
+    transform(code, id) {
+      return {
+        code: code.replaceAll(/'sites\[(.*?)\]'/g, (match, site) =>
+          JSON.stringify(sites[site])
+        ),
+      };
+    },
+  };
+};
 const rollupConfig = [
   {
     input: {
@@ -26,18 +52,33 @@ const rollupConfig = [
           minimize: false,
           postcss: postcssOptions,
         }),
-        userscript(
-          path.resolve('src/meta.js'),
-          meta => meta
+        userscript(path.resolve('src/meta.js'), (meta) =>
+          meta
             .replace('process.env.VERSION', pkg.version)
-            .replace('process.env.AUTHOR', pkg.author),
+            .replace('process.env.AUTHOR', pkg.author)
+            .replace(
+              '// @match       STC.sites',
+              (() => {
+                let result = '';
+                for (let type in sites) {
+                  for (let site of sites[type]) {
+                    result += `// @match       *://${site}/*\n`;
+                  }
+                }
+                return result.replace(/\n$/, '');
+              })()
+            )
         ),
+        coolreplace(),
       ],
     },
     output: {
       format: 'iife',
       file: `${DIST}/${FILENAME}.user.js`,
-      banner: env === "development" ? `GM.registerMenuCommand('Build: ${Math.floor(Math.random() * 8888888)}', ()=>{});` : '',
+      banner:
+        env === 'development'
+          ? `GM.registerMenuCommand('Built @ ${new Date()}', ()=>{});`
+          : '',
       ...bundleOptions,
     },
   },

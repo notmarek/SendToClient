@@ -2,7 +2,7 @@
 // @name        SendToClient
 // @namespace   NotMareks Scripts
 // @description Painlessly send torrents to your bittorrent client.
-// @match       *://*/*
+// @match       STC.sites
 // @grant       GM_addStyle
 // @grant       GM.registerMenuCommand
 // @grant       GM.unregisterMenuCommand

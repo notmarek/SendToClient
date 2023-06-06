@@ -3,25 +3,7 @@ import { profileManager } from './profileManager';
 const handlers = [
   {
     name: 'Gazelle',
-    matches: [
-      'gazellegames.net',
-      'animebytes.tv',
-      'orpheus.network',
-      'passthepopcorn.me',
-      'greatposterwall.com',
-      'redacted.ch',
-      'jpopsuki.eu',
-      'tv-vault.me',
-      'sugoimusic.me',
-      'ianon.app',
-      'alpharatio.cc',
-      'uhdbits.org',
-      'morethantv.me',
-      'empornium.is',
-      'deepbassnine.com',
-      'broadcasthe.net',
-      'secret-cinema.pw',
-    ],
+    matches: 'sites[Gazelle]',
     run: async () => {
       for (const a of Array.from(document.querySelectorAll('a')).filter(
         (a) => a.innerText === 'DL' || a.title == 'Download Torrent'
@@ -98,7 +80,7 @@ const handlers = [
   },
   {
     name: 'BLU UNIT3D',
-    matches: ['blutopia.cc', 'aither.cc'],
+    matches: 'sites[BLU UNIT3D]',
     run: async () => {
       let rid = await fetch(
         Array.from(document.querySelectorAll('ul>li>a')).find(
@@ -119,7 +101,7 @@ const handlers = [
   },
   {
     name: 'UNIT3D',
-    matches: ['desitorrents.tv', 'jptv.club', 'telly.wtf', 'torrentseeds.org'],
+    matches: 'sites[UNIT3D]',
     run: async (rid = null) => {
       if (!rid) {
         rid = await fetch(
@@ -202,7 +184,7 @@ const handlers = [
   },
   {
     name: 'TorrentLeech',
-    matches: ['torrentleech.org'],
+    matches: 'sites[TorrentLeech]',
     run: async () => {
       const username = document
         .querySelector('span.link')
@@ -242,7 +224,7 @@ const handlers = [
   },
   {
     name: 'AnilistBytes',
-    matches: ['anilist.co'],
+    matches: 'sites[AnilistBytes]',
     run: async () => {
       unsafeWindow._addTo = async (torrentUrl) =>
         profileManager.selectedProfile.addTorrent(torrentUrl);

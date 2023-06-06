@@ -80,6 +80,18 @@ const profileOnSave = (e, shadow) => {
   );
 };
 
+const addSiteToProfile = async (hostname, shadow) => {
+  let result = await profileManager.selectedProfile.linkTo(hostname);
+
+  if (
+    result !== true &&
+    confirm(
+      `This site is already linked to "${result}". Do you want to replace it?`
+    )
+  )
+    profileManager.selectedProfile.linkTo(hostname, true);
+  profileSelectHandler({ target: shadow.querySelector('#profile') }, shadow);
+};
 function profileSelectHandler(e, shadow) {
   const profile = profileManager.getProfile(e.target.value);
   profileManager.setSelectedProfile(profile.id);
@@ -94,45 +106,12 @@ function profileSelectHandler(e, shadow) {
     VM.m(
       <>
         {profileManager.selectedProfile.linkedTo.map((site) => (
-          <option
-            onclick={(e) => {
-              e.target.hidden = 1;
-              profileManager.selectedProfile.unlinkFrom(e.target.value);
-              profileSelectHandler(
-                { target: shadow.querySelector('#profile') },
-                shadow
-              );
-            }}
-            value={site}
-          >
-            {site}
-          </option>
+          <option value={site}>{site}</option>
         ))}
         {profileManager.selectedProfile.linkedTo.includes(
           location.hostname
         ) ? null : (
-          <option
-            value={location.hostname}
-            onclick={async (e) => {
-              let result = await profileManager.selectedProfile.linkTo(
-                location.hostname
-              );
-
-              if (
-                result !== true &&
-                confirm(
-                  `This site is already linked to "${result}". Do you want to replace it?`
-                )
-              )
-                profileManager.selectedProfile.linkTo(location.hostname, true);
-              profileSelectHandler(
-                { target: shadow.querySelector('#profile') },
-                shadow
-              );
-            }}
-          >
-            Link to this site.
-          </option>
+          <option value={location.hostname}>Link to this site.</option>
         )}
       </>
     )
@@ -218,47 +197,23 @@ function LinkToSite({ shadow }) {
   return (
     <>
       <label for="linkToSite">Linked to:</label>
-      <select id="linkToSite" name="linkToSite">
-        {profileManager.selectedProfile.linkedTo.map((site) => (
-          <option
-            onclick={(e) => {
-              e.target.hidden = 1;
+      <select
+        onchange={async (e) => {
+          if (profileManager.selectedProfile.linkedTo.includes(e.target.value))
+            confirm('Do you want to unlink this site?') &&
               profileManager.selectedProfile.unlinkFrom(e.target.value);
-              profileSelectHandler(
-                { target: shadow.querySelector('#profile') },
-                shadow
-              );
-            }}
-            value={site}
-          >
-            {site}
-          </option>
+          else await addSiteToProfile(e.target.value, shadow);
+        }}
+        id="linkToSite"
+        name="linkToSite"
+      >
+        {profileManager.selectedProfile.linkedTo.map((site) => (
+          <option value={site}>{site}</option>
         ))}
         {profileManager.selectedProfile.linkedTo.includes(
           location.hostname
         ) ? null : (
-          <option
-            value={location.hostname}
-            onclick={async (e) => {
-              let result = await profileManager.selectedProfile.linkTo(
-                location.hostname
-              );
-
-              if (
-                result !== true &&
-                confirm(
-                  `This site is already linked to "${result}". Do you want to replace it?`
-                )
-              )
-                profileManager.selectedProfile.linkTo(location.hostname, true);
-              profileSelectHandler(
-                { target: shadow.querySelector('#profile') },
-                shadow
-              );
-            }}
-          >
-            Link to this site.
-          </option>
+          <option value={location.hostname}>Link to this site.</option>
         )}
       </select>
     </>
