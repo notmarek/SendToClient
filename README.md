@@ -1,14 +1,12 @@
 <h1 align="center">
-  
-<a style="color: #6fa8dc" href="https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/SendToClient.user.js">Install</a> | <a style="color: #6aa84f" href="https://github.com/notmarek/SendToClient">View Source</a>
 
-  
-  
+`<a style="color: #6fa8dc" href="https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/SendToClient.user.js">`Install`</a>` | `<a style="color: #6aa84f" href="https://github.com/notmarek/SendToClient">`View Source`</a>`
 
 ![https://ptpimg.me/6fh61t.png](https://ptpimg.me/6fh61t.png)
 ![https://ptpimg.me/5ujhi8.png](https://ptpimg.me/5ujhi8.png)
 
 This script let's you send torrents straight to your download client with a single button!
+
 </h1>
 
 ## **Limitations:**
@@ -24,6 +22,8 @@ qBittorrent, Transmission,  Deluge and Flood (this lets you use anything flood s
 **Others:** TorrentLeech, AnilistBytes script
 
 ## **Changelog:**
+
+[2.2.2](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/3507cc15889ad03402ec3d113e302267a2ed04f8/SendToClient.user.js) - The script now only injects on sites, where it actually works.
 
 [2.2.1](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/79dc5d28acee6fc075954c86aee3f721a1e1d93a/SendToClient.user.js) - Added ability to pin profiles to sites, added support for TL
 
