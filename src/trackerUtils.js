@@ -1,5 +1,42 @@
 import { profileManager } from './profileManager';
 
+const STBTN = ({ torrentUrl }) => {
+  return (
+    <a
+      title={`Add to ${profileManager.selectedProfile.name}.`}
+      href="#"
+      className="sendtoclient"
+      onclick={async (e) => {
+        e.preventDefault();
+        await profileManager.selectedProfile.addTorrent(torrentUrl);
+        e.target.innerText = 'Added!';
+        e.target.onclick = null;
+      }}
+    >
+      ST
+    </a>
+  );
+};
+const FSTBTN = ({ torrentUrl }) => {
+  return (
+    <a
+      href="#"
+      title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
+      className="sendtoclient"
+      onclick={async (e) => {
+        e.preventDefault();
+        if (!confirm('Are you sure you want to use a freeleech token here?'))
+          return;
+        await profileManager.selectedProfile.addTorrent(torrentUrl);
+        e.target.innerText = 'Added!';
+        e.target.onclick = null;
+      }}
+    >
+      FST
+    </a>
+  );
+};
+
 const handlers = [
   {
     name: 'Gazelle',
@@ -19,25 +56,7 @@ const handlers = [
         let fst = fl ? (
           <>
             &nbsp;|&nbsp;
-            <a
-              href="#"
-              title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}
-              className="sendtoclient"
-              onclick={async (e) => {
-                e.preventDefault();
-                if (
-                  !confirm(
-                    'Are you sure you want to use a freeleech token here?'
-                  )
-                )
-                  return;
-                await profileManager.selectedProfile.addTorrent(fl.href);
-                e.target.innerText = 'Added!';
-                e.target.onclick = null;
-              }}
-            >
-              FST
-            </a>
+            <FSTBTN torrentUrl={fl.href} />
           </>
         ) : null;
         parent.innerHTML = null;
@@ -48,19 +67,7 @@ const handlers = [
               {buttons.map((e) => (
                 <>{e} | </>
               ))}
-              <a
-                href="#"
-                className="sendtoclient"
-                title={`Add to ${profileManager.selectedProfile.name}.`}
-                onclick={async (e) => {
-                  e.preventDefault();
-                  await profileManager.selectedProfile.addTorrent(torrentUrl);
-                  e.target.innerText = 'Added!';
-                  e.target.onclick = null;
-                }}
-              >
-                ST
-              </a>
+              <STBTN torrentUrl={torrentUrl} />
               {fst}
               &nbsp;]
             </>
@@ -125,23 +132,7 @@ const handlers = [
             let parent = a.parentElement;
             let torrentUrl =
               a.href.replace('/torrents/', '/torrent/') + `.${rid}`;
-            parent.appendChild(
-              VM.m(
-                <a
-                  title={`Add to ${profileManager.selectedProfile.name}.`}
-                  href="#"
-                  className="sendtoclient"
-                  onclick={async (e) => {
-                    e.preventDefault();
-                    await profileManager.selectedProfile.addTorrent(torrentUrl);
-                    e.target.innerText = 'Added!';
-                    e.target.onclick = null;
-                  }}
-                >
-                  ST
-                </a>
-              )
-            );
+            parent.appendChild(VM.m(<STBTN torrentUrl={torrentUrl} />));
           });
       };
       appendButton();
@@ -183,6 +174,31 @@ const handlers = [
     },
   },
   {
+    name: 'Karagarga',
+    matches: 'sites[Karagarga]',
+    run: async () => {
+      if (unsafeWindow.location.href.includes('details.php')) {
+        let dl_btn = document.querySelector('a.index');
+        let torrent_uri = dl_btn.href;
+        return dl_btn.insertAdjacentElement(
+          'afterend',
+          VM.m(
+            <span>
+              &nbsp; <STBTN torrentUrl={torrent_uri} />
+            </span>
+          )
+        );
+      }
+      document.querySelectorAll("img[alt='Download']").forEach((e) => {
+        let parent = e.parentElement;
+        let torrent_uri = e.parentElement.href;
+        let container = parent.parentElement;
+        let st = VM.m(<STBTN torrentUrl={torrent_uri} />);
+        container.appendChild(st);
+      });
+    },
+  },
+  {
     name: 'TorrentLeech',
     matches: 'sites[TorrentLeech]',
     run: async () => {
@@ -202,23 +218,7 @@ const handlers = [
       for (const a of document.querySelectorAll('a.download')) {
         let torrent_uri = a.href.match(/\/download\/(\d*?)\/(.*?)$/);
         torrent_uri = `https://torrentleech.org/rss/download/${torrent_uri[1]}/${rid}/${torrent_uri[2]}`;
-        a.parentElement.appendChild(
-          VM.m(
-            <a
-              href="#"
-              title={`Add to ${profileManager.selectedProfile.name}.`}
-              onclick={async (e) => {
-                e.preventDefault();
-                await profileManager.selectedProfile.addTorrent(torrent_uri);
-                e.target.innerText = 'Added!';
-                e.target.onclick = null;
-                return false;
-              }}
-            >
-              ST
-            </a>
-          )
-        );
+        a.parentElement.appendChild(VM.m(<STBTN torrentUrl={torrent_uri} />));
       }
     },
   },
@@ -237,7 +237,7 @@ export const createButtons = async () => {
     const regex = handler.matches.join('|');
     if (unsafeWindow.location.href.match(regex)) {
       handler.run();
-      console.log('Matched ' + handler.name);
+      console.log(`%c[SendToClient] Using engine {${handler.name}}`, "color: #42adf5; font-weight: bold; font-size: 1.5em;");
       return handler.name;
     }
   }

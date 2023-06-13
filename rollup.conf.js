@@ -1,6 +1,5 @@
 const path = require('path');
 const { getRollupPlugins } = require('@gera2ld/plaid');
-const sites = require('./sites.json');
 
 const userscript = require('rollup-plugin-userscript');
 const pkg = require('./package.json');
@@ -8,6 +7,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const DIST = 'dist';
 const FILENAME = 'SendToClient';
+let sites = require('./sites.json');
 
 const bundleOptions = {
   extend: true,
@@ -23,7 +23,9 @@ const coolreplace = () => {
   return {
     name: 'coolreplace',
 
-    buildStart() {},
+    buildStart() {
+      sites = require('./sites.json');
+    },
 
     renderChunk(code, chunk) {
       return {

@@ -166,7 +166,7 @@ export async function testClient(clientUrl, username, password, client) {
   let result = await clients[client]();
   return result;
 }
-
+// TODO: new implementation - there should be a class for each client implementating the needed methods
 export const getCategories = async (clientUrl, username, password) => {
   XFetch.post(
     `${clientUrl}/api/v2/auth/login`,
