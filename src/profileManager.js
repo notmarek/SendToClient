@@ -1,4 +1,4 @@
-import { testClient, addTorrent, getCategories } from './clientUtils';
+import { clientFactory } from './clientUtils';
 
 class Profile {
   constructor(
@@ -14,10 +14,9 @@ class Profile {
   ) {
     this.id = id;
     this.name = name;
-    this.host = host;
     this.username = username;
     this.password = password;
-    this.client = client;
+    this.client = clientFactory(host, username, password, client);
     this.saveLocation = saveLocation;
     this.category = category;
     this.linkedTo = linkedTo;
@@ -41,27 +40,17 @@ class Profile {
     profileManager.save();
   }
   async getCategories() {
-    if (this.client != 'qbit') return [];
-    let res = await getCategories(this.host, this.username, this.password);
-    console.log(res);
+    if (this.client.type != 'qbit') return [];
+    let res = await this.client.getCategories();
     return res;
   }
   async testConnection() {
-    return await testClient(
-      this.host,
-      this.username,
-      this.password,
-      this.client
-    );
+    return await this.client.test();
   }
 
   async addTorrent(torrent_uri) {
-    return await addTorrent(
+    return await this.client.addTorrent(
       torrent_uri,
-      this.host,
-      this.username,
-      this.password,
-      this.client,
       this.saveLocation,
       this.category
     );

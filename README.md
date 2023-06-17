@@ -19,7 +19,7 @@ qBittorrent, Transmission,  Deluge and Flood (this lets you use anything flood s
 
 **UNIT3D:** BLU, Aither, DT, Telly, TS
 
-**Others:** TorrentLeech, AnilistBytes script
+**Others:** TorrentLeech, AnilistBytes script, KG
 
 ## **Changelog:**
 
