@@ -38,6 +38,7 @@ function ClientSelector({ shadow }) {
         <option value="flood">Flood</option>
         <option value="qbit">qBittorrent</option>
         <option value="trans">Transmission</option>
+        <option value="rutorrent">ruTorrent</option>
         <option value="unknown" hidden>
           Not supported by auto detect
         </option>

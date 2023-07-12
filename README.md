@@ -11,7 +11,7 @@ This script let's you send torrents straight to your download client with a sing
 
 ## **Limitations:**
 
-qBittorrent, Transmission,  Deluge and Flood (this lets you use anything flood supports) are supported, if you want to see your client added leave a comment.
+qBittorrent, Transmission, Deluge, ruTorrent, and Flood (this lets you use anything flood supports) are supported, if you want to see your client added leave a comment.
 
 ## **Supported sites:**
 
@@ -22,6 +22,7 @@ qBittorrent, Transmission,  Deluge and Flood (this lets you use anything flood s
 **Others:** TorrentLeech, AnilistBytes script
 
 ## **Changelog:**
+[2.2.4](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/98663a9a84f4b05352eaa3a9bb78bf8fdb4fc312/SendToClient.user.js) - ruTorrent support  
 
 [2.2.3](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/5bfd7a3a42a8faa64b9632671c500fc6995486e0/SendToClient.user.js) - KG support, minor code cleanup
 

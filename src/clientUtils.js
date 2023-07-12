@@ -96,6 +96,21 @@ export const addTorrent = async (
         { 'content-type': 'application/json' }
       );
     },
+    rutorrent: async () => {
+      // credit to humeur
+      let headers = {
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+      };
+      const response = await fetch(torrentUrl);
+      const data = await response.blob();
+      let form = new FormData();
+      form.append('torrent_file[]', data, 'sendtoclient.torrent');
+
+      form.append('torrents_start_stopped', 'true');
+      form.append('dir_edit', path);
+      form.append('label', category);
+      XFetch.post(`${clientUrl}/rutorrent/php/addtorrent.php?json=1`, form, headers);
+    }
   };
 
   await implementations[client]();
@@ -162,6 +177,19 @@ export async function testClient(clientUrl, username, password, client) {
       }
       return false;
     },
+    rutorrent: async () => {
+      // credit to humeur
+      let headers = {
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+        'Content-Type': 'application/json'
+      };
+      let res = await XFetch.post(`${clientUrl}/rutorrent/php/addtorrent.php?json=1`, null, headers);
+      if (res.raw.status !== 401) {
+        return true;
+      }
+      return false
+      // credit to humeur;
+    }
   };
   let result = await clients[client]();
   return result;
@@ -192,5 +220,6 @@ export async function detectClient(url) {
   if (body.includes('<title>Deluge ')) return 'deluge';
   if (body.includes('<title>Flood</title>')) return 'flood';
   if (body.includes('<title>qBittorrent ')) return 'qbit';
+  if (body.includes('ruTorrent ')) return 'rutorrent';
   return 'unknown';
 }
