@@ -64,7 +64,7 @@ const rollupConfig = [
                 let result = '';
                 for (let type in sites) {
                   for (let site of sites[type]) {
-                    result += `// @match       *://${site}/*\n`;
+                    result += `// @match       *://*.${site}/*\n`;
                   }
                 }
                 return result.replace(/\n$/, '');
