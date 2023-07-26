@@ -17,11 +17,13 @@ qBittorrent, Transmission, Deluge, ruTorrent, and Flood (this lets you use anyth
 
 **Gazelle:** PTP, GGn, AB, OPS, GPW, RED, JPS, TVV, Sugoi Music, iAnon, AR, UHDB, MTV, EMP, BTN, SC (Some of these are untested an may not work, please report so)
 
-**UNIT3D:** BLU, Aither, DT, Telly, TS
+**UNIT3D:** BLU, Aither, DT, Telly, TS, BHD (F3NIX fork)
 
 **Others:** TorrentLeech, AnilistBytes script
 
 ## **Changelog:**
+[2.2.5](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/987f099d7cbed678626214d10ae46185130db786/SendToClient.user.js) - BHD support
+
 [2.2.4](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/98663a9a84f4b05352eaa3a9bb78bf8fdb4fc312/SendToClient.user.js) - ruTorrent support  
 
 [2.2.3](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/5bfd7a3a42a8faa64b9632671c500fc6995486e0/SendToClient.user.js) - KG support, minor code cleanup

@@ -107,6 +107,50 @@ const handlers = [
     },
   },
   {
+    name: 'F3NIX',
+    matches: 'sites[F3NIX]',
+    run: async (rid = null) => {
+      if (!rid) {
+        rid = await fetch(location.origin + '/settings/change_rid')
+          .then((e) => e.text())
+          .then(
+            (e) =>
+              e.match(
+                /class="beta-form-main" name="null" value="(.*?)" disabled>/
+              )[1]
+          );
+      }
+      const appendButton = () => {
+        Array.from(
+          document.querySelectorAll('a[title="Download Torrent"]')
+        ).forEach((a) => {
+          let parent = a.parentElement;
+          let torrentUrl = `${a.href.replace(
+            '/download/',
+            '/torrent/download/'
+          )}.${rid}`;
+          parent.appendChild(
+            VM.m(
+              <>
+                {' '}
+                <STBTN torrentUrl={torrentUrl} />
+              </>
+            )
+          );
+        });
+      };
+      appendButton();
+      let oldPushState = unsafeWindow.history.pushState;
+      unsafeWindow.history.pushState = function () {
+        console.log(
+          '[SendToClient] Detected a soft navigation to ${unsafeWindow.location.href}'
+        );
+        appendButton();
+        return oldPushState.apply(this, arguments);
+      };
+    },
+  },
+  {
     name: 'UNIT3D',
     matches: 'sites[UNIT3D]',
     run: async (rid = null) => {
@@ -237,7 +281,10 @@ export const createButtons = async () => {
     const regex = handler.matches.join('|');
     if (unsafeWindow.location.href.match(regex)) {
       handler.run();
-      console.log(`%c[SendToClient] Using engine {${handler.name}}`, "color: #42adf5; font-weight: bold; font-size: 1.5em;");
+      console.log(
+        `%c[SendToClient] Using engine {${handler.name}}`,
+        'color: #42adf5; font-weight: bold; font-size: 1.5em;'
+      );
       return handler.name;
     }
   }
