@@ -1,7 +1,71 @@
 import { profileManager } from './profileManager';
+import { globalSettingsManager } from './globalSettingsManager.js';
+import styles, { stylesheet } from './style.module.css';
+function ExtendeSTCProfile({ panel, profile, torrentUrl }) {
+  return (<button style="display: block; padding: 5px; margin: 5px; cursor: pointer;" onclick={
+    (e)=>{
+      profile.addTorrent(torrentUrl);
+      return panel.hide();
+    }
+  }>
+    {profile.name}
+  </button>
+  );
+};
+function ExtendedSTCElement({ panel, torrentUrl }) {
+  let profiles = [];
+  for (let profile of profileManager.profiles) {
+    profiles.push(<ExtendeSTCProfile panel={panel} profile={profile} torrentUrl={torrentUrl}/>);
+  }
+  return (<div style="display: flex; flex-direction: column; align-items: center; justify-content:center;">
+    Choose which profile to send to
+   {profiles}
+  <button style="display: block; padding: 5px; margin: 5px; background-color: #fe0000; cursor: pointer;" onclick={() => panel.hide()}>Cancel</button>
+    </div>);
+};
 
-const STBTN = ({ torrentUrl }) => {
+const ExtendedSTC = (torrentUrl) => {
+  const panel = VM.getPanel({
+    theme: 'dark',
+    shadow: true,
+    style: stylesheet,
+  });
+  // give the panel access to itself :)
+  panel.setContent(<ExtendedSTCElement panel={panel} torrentUrl={torrentUrl} />);
+  panel.setMovable(false);
+  panel.wrapper.children[0].classList.add(styles.wrapper);
+  let original_show = panel.show;
+  panel.show = () => {
+    original_show.apply(panel);
+    document.body.style.overflow = 'hidden';
+  };
+
+  let original_hide = panel.hide;
+  panel.hide = () => {
+    original_hide.apply(panel);
+    document.body.style.overflow = 'auto';
+  };
+  panel.show();
+};
+const XSTBTN = ({ torrentUrl, freeleech }) => {
   return (
+    <a title="Add to client - extended!"
+       href="#"
+       className="sendtoclient"
+       onclick={async (e) => {
+          if (freeleech)
+           if (!confirm('After sending to client a feeleech token will be consumed!'))
+            return;
+
+          ExtendedSTC(torrentUrl);
+       }}
+    >
+    X{freeleech ? "F" : ""}ST
+    </a>
+  );
+}
+const STBTN = ({ torrentUrl }) => {
+  return globalSettingsManager.button_type ? <XSTBTN freeleech={false} torrentUrl={torrentUrl}/> : (
     <a
       title={`Add to ${profileManager.selectedProfile.name}.`}
       href="#"
@@ -18,7 +82,7 @@ const STBTN = ({ torrentUrl }) => {
   );
 };
 const FSTBTN = ({ torrentUrl }) => {
-  return (
+  return globalSettingsManager.button_type ? <XSTBTN freeleech={true} torrentUrl={torrentUrl} /> : (
     <a
       href="#"
       title={`Freeleechize and add to ${profileManager.selectedProfile.name}.`}

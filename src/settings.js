@@ -1,6 +1,7 @@
 import styles, { stylesheet } from './style.module.css';
 import { testClient, detectClient } from './clientUtils';
 import { profileManager } from './profileManager';
+import { globalSettingsManager } from './globalSettingsManager.js';
 const clientSelectorOnChange = (e, shadow) => {
   if (
     shadow.querySelector('#host').value === '' &&
@@ -227,6 +228,14 @@ function SettingsElement({ panel }) {
     <>
       <div className={styles.title}>SendToClient</div>
       <div>
+        <div className={styles.settings}>
+          <label for="btn-type" title="Toggles whatever you want to choose a profile while sending a torrent">Advanced button:</label>
+          <input name="btn-type"
+              type="checkbox"
+              title="Change will be applied after a page reload"
+              onchange={(e) => globalSettingsManager.button_type = Number(e.target.checked)}
+              checked={globalSettingsManager.button_type ? true : false} />
+        </div>
         <form
           className={styles.settings}
           onsubmit={async (e) => {
