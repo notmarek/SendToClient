@@ -18,7 +18,10 @@ export const globalSettingsManager = {
   },
 
   async load() {
-    this.settings = JSON.parse(await GM.getValue('settings'));
+    let settings = await GM.getValue('settings');
+    if (settings) {
+      this.settings = JSON.parse(settings);
+    }
   },
 
 

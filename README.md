@@ -22,7 +22,10 @@ qBittorrent, Transmission, Deluge, ruTorrent, and Flood (this lets you use anyth
 **Others:** TorrentLeech, AnilistBytes script
 
 ## **Changelog:**
+[2.3.1](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/b8ba70c85aadebfbe4536be23b6907e35e7c47c1/SendToClient.user.js) - Fixed a bug that killed the whole extension
+
 [2.3.0](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/61e0b340385905f03e0895ffdca42e52fea0ea54/SendToClient.user.js) - Extended ST button - let's you pick the profile on each torrent seperatly
+
 [2.2.5](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/987f099d7cbed678626214d10ae46185130db786/SendToClient.user.js) - BHD support
 
 [2.2.4](https://gist.github.com/notmarek/4f8fea8ae4e7cc524cba51a3594a128c/raw/98663a9a84f4b05352eaa3a9bb78bf8fdb4fc312/SendToClient.user.js) - ruTorrent support  
