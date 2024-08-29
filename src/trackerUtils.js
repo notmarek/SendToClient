@@ -101,54 +101,45 @@ const FSTBTN = ({ torrentUrl }) => {
   );
 };
 
-const handlers = [
-  {
-    name: 'Gazelle',
-    matches: 'sites[Gazelle]',
-    run: async () => {
-      for (const a of Array.from(document.querySelectorAll('a')).filter(
-        (a) => a.innerText === 'DL' || a.title == 'Download Torrent'
-      )) {
-        let parent = a.parentElement;
-        let torrentUrl = a.href;
-        let buttons = Array.from(parent.childNodes).filter(
-          (e) => e.nodeName !== '#text'
-        );
-        let fl = Array.from(parent.querySelectorAll('a')).find(
-          (a) => a.innerText === 'FL'
-        );
-        let fst = fl ? (
-          <>
-            &nbsp;|&nbsp;
-            <FSTBTN torrentUrl={fl.href} />
-          </>
-        ) : null;
-        parent.innerHTML = null;
-        parent.appendChild(
-          VM.m(
-            <>
-              [&nbsp;
-              {buttons.map((e) => (
-                <>{e} | </>
-              ))}
-              <STBTN torrentUrl={torrentUrl} />
-              {fst}
-              &nbsp;]
-            </>
-          )
-        );
+const handlers = [{
+  name: 'Gazelle',
+  matches: ["gazellegames.net", "animebytes.tv", "orpheus.network", "passthepopcorn.me", "greatposterwall.com", "redacted.ch", "jpopsuki.eu", "tv-vault.me", "sugoimusic.me", "ianon.app", "alpharatio.cc", "uhdbits.org", "morethantv.me", "empornium.is", "deepbassnine.com", "broadcasthe.net", "secret-cinema.pw"],
+  run: async () => {
+    const links = Array.from(document.querySelectorAll('a')).filter(a =>
+      a.innerText.trim() === 'DL' ||
+      a.title === 'Download Torrent' ||
+      a.classList.contains('link_1')
+    );
+
+    for (const a of links) {
+      let parent = a.closest('.basic-movie-list__torrent__action');
+      if (!parent) {
+        parent = a.parentElement;
       }
-      window.addEventListener('profileChanged', () => {
-        document.querySelectorAll('a.sendtoclient').forEach((e) => {
-          if (e.title.includes('Freeleechize')) {
-            e.title = `Freeleechize and add to ${profileManager.selectedProfile.name}.`;
-          } else {
-            e.title = `Add to ${profileManager.selectedProfile.name}.`;
-          }
-        });
+      let torrentUrl = a.href;
+      let buttons = Array.from(parent.childNodes).filter(e => e.nodeName !== '#text');
+      let fl = Array.from(parent.querySelectorAll('a')).find(a => a.innerText === 'FL');
+      let fst = fl ? VM.h(VM.Fragment, null, "\xA0|\xA0", VM.h(FSTBTN, {
+        torrentUrl: fl.href
+      })) : null;
+
+      parent.innerHTML = ''; // Use '' instead of null to avoid issues
+      parent.appendChild(VM.m(VM.h(VM.Fragment, null, "[\xA0", buttons.map(e => VM.h(VM.Fragment, null, e, " | ")), VM.h(STBTN, {
+        torrentUrl: torrentUrl
+      }), fst, "\xA0]")));
+    }
+
+    window.addEventListener('profileChanged', () => {
+      document.querySelectorAll('a.sendtoclient').forEach(e => {
+        if (e.title.includes('Freeleechize')) {
+          e.title = `Freeleechize and add to ${profileManager.selectedProfile.name}.`;
+        } else {
+          e.title = `Add to ${profileManager.selectedProfile.name}.`;
+        }
       });
-    },
-  },
+    });
+  }
+},
   {
     name: 'BLU UNIT3D',
     matches: 'sites[BLU UNIT3D]',
@@ -341,14 +332,13 @@ const handlers = [
 ];
 
 export const createButtons = async () => {
+  document.querySelectorAll('.sendtoclient').forEach(button => button.remove());
+
   for (const handler of handlers) {
     const regex = handler.matches.join('|');
     if (unsafeWindow.location.href.match(regex)) {
       handler.run();
-      console.log(
-        `%c[SendToClient] Using engine {${handler.name}}`,
-        'color: #42adf5; font-weight: bold; font-size: 1.5em;'
-      );
+      console.log(`%c[SendToClient] Using engine {${handler.name}}`, 'color: #42adf5; font-weight: bold; font-size: 1.5em;');
       return handler.name;
     }
   }

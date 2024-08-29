@@ -22,3 +22,9 @@ profileManager.load().then(() => {
   profileQuickSwitcher();
   createButtons();
 }));
+
+document.addEventListener('PTPAddReleasesFromOtherTrackersComplete', () => {
+  console.log('Adding buttons for added releases');
+  profileQuickSwitcher();
+  createButtons();
+});
