@@ -103,7 +103,7 @@ const FSTBTN = ({ torrentUrl }) => {
 
 const handlers = [{
   name: 'Gazelle',
-  matches: ["gazellegames.net", "animebytes.tv", "orpheus.network", "passthepopcorn.me", "greatposterwall.com", "redacted.ch", "jpopsuki.eu", "tv-vault.me", "sugoimusic.me", "ianon.app", "alpharatio.cc", "uhdbits.org", "morethantv.me", "empornium.is", "deepbassnine.com", "broadcasthe.net", "secret-cinema.pw"],
+  matches: ["gazellegames.net", "animebytes.tv", "orpheus.network", "passthepopcorn.me", "greatposterwall.com", "redacted.sh", "jpopsuki.eu", "tv-vault.me", "sugoimusic.me", "ianon.app", "alpharatio.cc", "uhdbits.org", "morethantv.me", "empornium.is", "deepbassnine.com", "broadcasthe.net", "secret-cinema.pw"],
   run: async () => {
     const links = Array.from(document.querySelectorAll('a')).filter(a =>
       a.innerText.trim() === 'DL' ||
