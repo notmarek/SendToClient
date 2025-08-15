@@ -143,22 +143,58 @@ const handlers = [{
   {
     name: 'BLU UNIT3D',
     matches: 'sites[BLU UNIT3D]',
-    run: async () => {
-      let rid = await fetch(
-        Array.from(document.querySelectorAll('ul>li>a')).find(
-          (e) => e.innerText === 'My Profile'
-        ).href + '/rsskey/edit'
+    run: async (rid = null) => {
+      rid = await fetch(
+        document.querySelector('.top-nav__username').href + '/rsskeys'
       )
         .then((e) => e.text())
-        .then(
-          (e) =>
-            e
-              .replaceAll(/\s/g, '')
-              .match(
-                /name="current_rsskey"readonlytype="text"value="(.*?)">/
-              )[1]
-        );
+        .then((e) => e.replaceAll(/\s/g, ''))
+        .then((e) => e.match(/tbody>*<tr>*<td>*(.*?)<\/td>/)[1]);
       handlers.find((h) => h.name === 'UNIT3D').run(rid);
+    },
+  },
+  {
+    name: 'HUNO',
+    matches: 'sites[HUNO]',
+    run: async (rid = null) => {
+      if (!rid) {
+        rid = await fetch(
+          Array.from(document.querySelectorAll('ul>li>a'))
+            .find((e) => e.innerText.includes('My Profile'))
+            .href.replace(/\.\d+$/, '') + '/settings/security'
+        )
+          .then((e) => e.text())
+          .then((e) => e.replaceAll(/\s/g, ''))
+          .then((e) => e.match(/RSSKey<\/p><codeclass="inline">(.*?)</)[1]);
+        const appendButton = () => {
+          Array.from(
+            document.querySelectorAll('a[href*="/torrents/download/"]')
+          ).forEach((a) => {
+            let parent = a.parentElement;
+            let torrentUrl = `${a.href.replace(
+              '/torrents/',
+              '/torrent/'
+            )}.${rid}`;
+            parent.appendChild(
+              VM.m(
+                <>
+                  {' '}
+                  <STBTN torrentUrl={torrentUrl} />
+                </>
+              )
+            );
+          });
+        };
+        appendButton();
+        let oldPushState = unsafeWindow.history.pushState;
+        unsafeWindow.history.pushState = function () {
+          console.log(
+            '[SendToClient] Detected a soft navigation to ${unsafeWindow.location.href}'
+          );
+          appendButton();
+          return oldPushState.apply(this, arguments);
+        };
+      }
     },
   },
   {
@@ -166,7 +202,7 @@ const handlers = [{
     matches: 'sites[F3NIX]',
     run: async (rid = null) => {
       if (!rid) {
-        rid = await fetch(location.origin + '/settings/change_rid')
+        rid = await fetch(location.origin + '/settings/security/rsskey')
           .then((e) => e.text())
           .then(
             (e) =>
